@@ -103,6 +103,7 @@ public final class TestEnvironment extends ExternalResource {
 
   Properties properties;
   private RsaKeyPairFactory.KeyPairHolder keyPairHolder;
+  private int uniquenessSuffix = 0;
 
   public TestEnvironment(final String springApplicationName) {
     super();
@@ -113,6 +114,17 @@ public final class TestEnvironment extends ExternalResource {
   protected void before() {
     // initialize test environment and populate default properties
     populate();
+  }
+
+  public String generateUniqueIdentifer(final String prefix) {
+    return generateUniqueIdentifer(prefix, 1);
+  }
+
+  //prefix followed by a positive number.
+  public String generateUniqueIdentifer(final String prefix, int minimumDigitCount) {
+    uniquenessSuffix++;
+    String format = String.format("%%0%dd", minimumDigitCount);
+    return String.format(format, uniquenessSuffix);
   }
 
   public void setContextPath(final String contextPath) {
