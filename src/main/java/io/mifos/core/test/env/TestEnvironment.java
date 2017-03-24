@@ -121,10 +121,10 @@ public final class TestEnvironment extends ExternalResource {
   }
 
   //prefix followed by a positive number.
-  public String generateUniqueIdentifer(final String prefix, int minimumDigitCount) {
+  public String generateUniqueIdentifer(final String prefix, final int minimumDigitCount) {
     uniquenessSuffix++;
-    String format = String.format("%%0%dd", minimumDigitCount);
-    return String.format(format, uniquenessSuffix);
+    final String format = String.format("%%0%dd", minimumDigitCount);
+    return prefix + String.format(format, uniquenessSuffix);
   }
 
   public void setContextPath(final String contextPath) {
