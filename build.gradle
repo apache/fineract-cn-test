@@ -64,6 +64,10 @@ publishing {
     }
 }
 
+jar {
+    from sourceSets.main.allSource
+}
+
 license {
     header rootProject.file('HEADER')
     strictCheck true
