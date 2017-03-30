@@ -18,9 +18,9 @@ package io.mifos.core.test.domain;
 import io.mifos.core.lang.DateConverter;
 import org.junit.Assert;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -28,18 +28,25 @@ import java.time.temporal.ChronoUnit;
  *
  * @author Myrle Krantz
  */
+@SuppressWarnings("WeakerAccess")
 public class TimeStampChecker {
+  private static final int DEFAULT_MAXIMUM_DELTA = 2;
   private final LocalDateTime expectedTimeStamp;
   private final Duration maximumDelta;
 
   public static TimeStampChecker roughlyNow()
   {
-    return new TimeStampChecker(LocalDateTime.now(ZoneId.of("UTC")), Duration.ofSeconds(3));
+    return new TimeStampChecker(LocalDateTime.now(Clock.systemUTC()), Duration.ofSeconds(DEFAULT_MAXIMUM_DELTA));
+  }
+
+  public static TimeStampChecker inTheFuture(final Duration offset)
+  {
+    return new TimeStampChecker(LocalDateTime.now(Clock.systemUTC()).plus(offset), Duration.ofSeconds(DEFAULT_MAXIMUM_DELTA));
   }
 
   public static TimeStampChecker allowSomeWiggleRoom(final Duration maximumDelta)
   {
-    return new TimeStampChecker(LocalDateTime.now(ZoneId.of("UTC")), maximumDelta);
+    return new TimeStampChecker(LocalDateTime.now(Clock.systemUTC()), maximumDelta);
   }
 
   private TimeStampChecker(final LocalDateTime expectedTimeStamp, final Duration maximumDelta) {
@@ -49,12 +56,17 @@ public class TimeStampChecker {
 
   public void assertCorrect(final String timeStamp)
   {
+    Assert.assertTrue("Delta from expected should have been less than " +
+                    maximumDelta + ". Timestamp string was " + timeStamp + ".",
+            isCorrect(timeStamp));
+  }
+
+  public boolean isCorrect(final String timeStamp) {
     final LocalDateTime parsedTimeStamp = DateConverter.fromIsoString(timeStamp);
 
-    final Duration deltaFromExpected = Duration.ofNanos(Math.abs(parsedTimeStamp.until(expectedTimeStamp, ChronoUnit.NANOS)));
+    final Duration deltaFromExpected = Duration.ofNanos(Math.abs(
+            parsedTimeStamp.until(expectedTimeStamp, ChronoUnit.NANOS)));
 
-    Assert.assertTrue("Delta from expected should have been less than " + maximumDelta + ", but was " + deltaFromExpected +
-                    ". Timestamp string was " + timeStamp + ".",
-            deltaFromExpected.compareTo(maximumDelta) < 0);
+    return deltaFromExpected.compareTo(maximumDelta) < 0;
   }
 }
