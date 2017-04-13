@@ -154,12 +154,14 @@ public final class TestEnvironment extends ExternalResource {
   {
     this.keyPairHolder = new RsaKeyPairFactory.KeyPairHolder(timestamp, publicKey, privateKey);
 
+    this.properties.setProperty(SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY, getSystemKeyTimestamp());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_MODULUS_PROPERTY, publicKey.getModulus().toString());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_EXPONENT_PROPERTY, publicKey.getPublicExponent().toString());
   }
 
   public void addSystemPrivateKeyToProperties()
   {
+    setProperty(SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY, getSystemKeyTimestamp());
     setProperty(SYSTEM_PRIVATE_KEY_MODULUS_PROPERTY, getSystemPrivateKey().getModulus().toString());
     setProperty(SYSTEM_PRIVATE_KEY_EXPONENT_PROPERTY, getSystemPrivateKey().getPrivateExponent().toString());
   }
