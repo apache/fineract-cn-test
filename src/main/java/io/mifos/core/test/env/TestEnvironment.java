@@ -35,6 +35,7 @@ public final class TestEnvironment extends ExternalResource {
 
   public static final String SERVER_CONTEXT_PATH_PROPERTY = "server.contextPath";
 
+  public static final String SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY = "system.publicKey.timestamp";
   public static final String SYSTEM_PUBLIC_KEY_MODULUS_PROPERTY = "system.publicKey.modulus";
   public static final String SYSTEM_PUBLIC_KEY_EXPONENT_PROPERTY = "system.publicKey.exponent";
   public static final String SYSTEM_PRIVATE_KEY_MODULUS_PROPERTY = "system.privateKey.modulus";
@@ -137,6 +138,10 @@ public final class TestEnvironment extends ExternalResource {
         this.properties.getProperty(TestEnvironment.SERVER_CONTEXT_PATH_PROPERTY);
   }
 
+  public String getSystemKeyTimestamp() {
+    return keyPairHolder.getTimestamp();
+  }
+
   public RSAPublicKey getSystemPublicKey() {
     return keyPairHolder.publicKey();
   }
@@ -145,16 +150,18 @@ public final class TestEnvironment extends ExternalResource {
     return keyPairHolder.privateKey();
   }
 
-  public void setKeyPair(final RSAPublicKey publicKey, final RSAPrivateKey privateKey)
+  public void setKeyPair(final String timestamp, final RSAPublicKey publicKey, final RSAPrivateKey privateKey)
   {
-    this.keyPairHolder = new RsaKeyPairFactory.KeyPairHolder(publicKey, privateKey);
+    this.keyPairHolder = new RsaKeyPairFactory.KeyPairHolder(timestamp, publicKey, privateKey);
 
+    this.properties.setProperty(SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY, getSystemKeyTimestamp());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_MODULUS_PROPERTY, publicKey.getModulus().toString());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_EXPONENT_PROPERTY, publicKey.getPublicExponent().toString());
   }
 
   public void addSystemPrivateKeyToProperties()
   {
+    setProperty(SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY, getSystemKeyTimestamp());
     setProperty(SYSTEM_PRIVATE_KEY_MODULUS_PROPERTY, getSystemPrivateKey().getModulus().toString());
     setProperty(SYSTEM_PRIVATE_KEY_EXPONENT_PROPERTY, getSystemPrivateKey().getPrivateExponent().toString());
   }
@@ -205,6 +212,7 @@ public final class TestEnvironment extends ExternalResource {
 
     this.keyPairHolder = RsaKeyPairFactory.createKeyPair();
 
+    this.properties.setProperty(SYSTEM_PUBLIC_KEY_TIMESTAMP_PROPERTY, this.keyPairHolder.getTimestamp());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_MODULUS_PROPERTY, this.keyPairHolder.publicKey().getModulus().toString());
     this.properties.setProperty(SYSTEM_PUBLIC_KEY_EXPONENT_PROPERTY, this.keyPairHolder.publicKey().getPublicExponent().toString());
   }
