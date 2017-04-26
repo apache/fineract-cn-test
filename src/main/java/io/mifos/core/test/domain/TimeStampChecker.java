@@ -63,9 +63,20 @@ public class TimeStampChecker {
 
   public boolean isCorrect(final String timeStamp) {
     final LocalDateTime parsedTimeStamp = DateConverter.fromIsoString(timeStamp);
+    return isCorrect(parsedTimeStamp);
+  }
+
+  public void assertCorrect(final LocalDateTime localDateTime)
+  {
+    Assert.assertTrue("Delta from expected should have been less than " +
+                    maximumDelta + ". LocalDateTime was " + localDateTime + ".",
+            isCorrect(localDateTime));
+  }
+
+  public boolean isCorrect(final LocalDateTime localDateTime) {
 
     final Duration deltaFromExpected = Duration.ofNanos(Math.abs(
-            parsedTimeStamp.until(expectedTimeStamp, ChronoUnit.NANOS)));
+            localDateTime.until(expectedTimeStamp, ChronoUnit.NANOS)));
 
     return deltaFromExpected.compareTo(maximumDelta) < 0;
   }

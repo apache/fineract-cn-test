@@ -68,4 +68,11 @@ public class TimeStampCheckerTest {
 
   }
 
+  @Test
+  public void justLocalDateTime() throws Exception {
+    final TimeStampChecker checker = TimeStampChecker.roughlyNow();
+    final LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
+    checker.assertCorrect(now);
+  }
+
 }
