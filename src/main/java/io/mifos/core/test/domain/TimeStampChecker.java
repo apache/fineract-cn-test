@@ -41,7 +41,12 @@ public class TimeStampChecker {
 
   public static TimeStampChecker inTheFuture(final Duration offset)
   {
-    return new TimeStampChecker(LocalDateTime.now(Clock.systemUTC()).plus(offset), Duration.ofSeconds(DEFAULT_MAXIMUM_DELTA));
+    return inTheFutureWithWiggleRoom(offset, Duration.ofSeconds(DEFAULT_MAXIMUM_DELTA));
+  }
+
+  public static TimeStampChecker inTheFutureWithWiggleRoom(final Duration offset, final Duration maximumDelta)
+  {
+    return new TimeStampChecker(LocalDateTime.now(Clock.systemUTC()).plus(offset), maximumDelta);
   }
 
   public static TimeStampChecker allowSomeWiggleRoom(final Duration maximumDelta)
