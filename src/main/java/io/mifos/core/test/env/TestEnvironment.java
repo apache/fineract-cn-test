@@ -18,6 +18,7 @@ package io.mifos.core.test.env;
 import io.mifos.core.lang.AutoTenantContext;
 import io.mifos.core.lang.security.RsaKeyPairFactory;
 import org.junit.rules.ExternalResource;
+import org.springframework.util.Base64Utils;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -100,6 +101,10 @@ public final class TestEnvironment extends ExternalResource {
 
   public static String getRandomTenantName() {
     return "cleopatra" + Math.abs(new Random().nextInt());
+  }
+
+  public static String encodePassword(final String password) {
+    return Base64Utils.encodeToString(password.getBytes());
   }
 
   Properties properties;
