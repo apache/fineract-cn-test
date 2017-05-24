@@ -46,7 +46,17 @@ class InMemoryEventRecorder implements EventRecorder {
 
   @Override
   public <T> boolean wait(final String operation, final T payloadMatcher) throws InterruptedException {
-    return waitForMatch(operation, x -> x.equals(payloadMatcher));
+    return waitForMatch(operation, new Function() {
+      @Override
+      public Object apply(Object x) {
+        return x.equals(payloadMatcher);
+      }
+
+      @Override
+      public String toString() {
+        return payloadMatcher.toString();
+      }
+    });
   }
 
   @Override
