@@ -122,6 +122,12 @@ public final class TestEnvironment extends ExternalResource {
     populate();
   }
 
+  public TestEnvironment addProperties(final ExtraProperties properties) {
+    properties.entrySet().forEach(x -> setProperty(x.getKey(), x.getValue()));
+
+    return this;
+  }
+
   public String generateUniqueIdentifer(final String prefix) {
     return generateUniqueIdentifer(prefix, 1);
   }
@@ -213,7 +219,7 @@ public final class TestEnvironment extends ExternalResource {
     this.properties.setProperty(FLYWAY_ENABLED_PROPERTY, FLYWAY_ENABLED_DEFAULT);
     this.properties.setProperty(HYSTRIX_ENABLED_PROPERTY, HYSTRIX_ENABLED_DEFAULT);
     this.properties.setProperty(RIBBON_USES_EUREKA_PROPERTY, RIBBON_USES_EUREKA_DEFAULT);
-    this.properties.setProperty(springApplicationName + "." + RIBBON_LIST_OF_SERVERS_PROPERTY, RIBBON_SERVER_DEFAULT + ":" + SERVER_PORT_DEFAULT);
+    this.properties.setProperty(RIBBON_LIST_OF_SERVERS_PROPERTY, RIBBON_SERVER_DEFAULT + ":" + SERVER_PORT_DEFAULT);
 
     this.keyPairHolder = RsaKeyPairFactory.createKeyPair();
 
