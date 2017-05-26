@@ -24,15 +24,22 @@ import java.sql.*;
 
 @SuppressWarnings({"WeakerAccess", "unused", "SqlNoDataSourceInspection", "SqlDialectInspection"})
 public final class MariaDBInitializer extends DataStoreTenantInitializer {
+
+  private final boolean useExistingDB;
   private static DB db;
 
   public MariaDBInitializer() {
+    this(false);
+  }
+
+  public MariaDBInitializer(final boolean useExistingDB) {
     super();
+    this.useExistingDB = useExistingDB;
   }
 
   @Override
   public void initialize() throws Exception  {
-    MariaDBInitializer.setup();
+    MariaDBInitializer.setup(useExistingDB);
   }
 
   @Override
@@ -43,18 +50,23 @@ public final class MariaDBInitializer extends DataStoreTenantInitializer {
 
   @Override
   public void finish() {
-    try {
-      MariaDBInitializer.tearDown();
-    }
-    catch (final Exception e)
-    {
-      throw new RuntimeException(e);
+    if (!useExistingDB) {
+      try {
+        MariaDBInitializer.tearDown();
+      } catch (final Exception e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
   public static void setup() throws Exception {
-    MariaDBInitializer.startEmbeddedMariaDB();
-    MariaDBInitializer.createDatabaseSeshat();
+    setup(false);
+  }
+  public static void setup(final boolean useExistingDB) throws Exception {
+    if (!useExistingDB) {
+      MariaDBInitializer.startEmbeddedMariaDB();
+      MariaDBInitializer.createDatabaseSeshat();
+    }
   }
 
   public static void tearDown() throws Exception {

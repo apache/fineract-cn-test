@@ -31,13 +31,18 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class CassandraInitializer extends DataStoreTenantInitializer {
 
+  private final boolean useExistingDB;
+
   public CassandraInitializer() {
-    super();
+    this(false);
+  }
+  public CassandraInitializer(boolean useExistingDB) {
+    super();this.useExistingDB = useExistingDB;
   }
 
   @Override
   public void initialize() throws Exception {
-    CassandraInitializer.setup();
+    CassandraInitializer.setup(useExistingDB);
   }
 
   @Override
@@ -47,12 +52,18 @@ public final class CassandraInitializer extends DataStoreTenantInitializer {
 
   @Override
   public void finish() {
-    CassandraInitializer.tearDown();
+    if (!useExistingDB) CassandraInitializer.tearDown();
   }
 
   public static void setup() throws Exception {
-    CassandraInitializer.startEmbeddedCassandra();
-    CassandraInitializer.createKeyspaceSeshat();
+    setup(false);
+  }
+
+  public static void setup(final boolean useExistingDB) throws Exception {
+    if (!useExistingDB) {
+      CassandraInitializer.startEmbeddedCassandra();
+      CassandraInitializer.createKeyspaceSeshat();
+    }
   }
 
   public static void tearDown() {
