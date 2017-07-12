@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public final class CassandraInitializer extends DataStoreTenantInitializer {
 
   private final boolean useExistingDB;
+  private Cluster cluster;
 
   public CassandraInitializer() {
     this(false);
@@ -42,7 +43,11 @@ public final class CassandraInitializer extends DataStoreTenantInitializer {
 
   @Override
   public void initialize() throws Exception {
-    CassandraInitializer.setup(useExistingDB);
+    final Cluster.Builder clusterBuilder = new Cluster.Builder()
+        .withClusterName(System.getProperty(TestEnvironment.CASSANDRA_CLUSTER_NAME_PROPERTY));
+    ContactPointUtils.process(clusterBuilder, System.getProperty(TestEnvironment.CASSANDRA_CONTACT_POINTS_PROPERTY));
+    cluster = clusterBuilder.build();
+    setup();
   }
 
   @Override
@@ -52,91 +57,78 @@ public final class CassandraInitializer extends DataStoreTenantInitializer {
 
   @Override
   public void finish() {
-    if (!useExistingDB) CassandraInitializer.tearDown();
+    if (cluster != null)
+      cluster.close();
+
+    if (!useExistingDB) this.tearDown();
   }
 
-  public static void setup() throws Exception {
-    setup(false);
-  }
-
-  public static void setup(final boolean useExistingDB) throws Exception {
+  private void setup() throws Exception {
     if (!useExistingDB) {
-      CassandraInitializer.startEmbeddedCassandra();
-      CassandraInitializer.createKeyspaceSeshat();
+      startEmbeddedCassandra();
+      createKeyspaceSeshat();
     }
   }
 
-  public static void tearDown() {
+  private void tearDown() {
     EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
   }
 
-  private static void startEmbeddedCassandra() throws Exception {
+  private void startEmbeddedCassandra() throws Exception {
     EmbeddedCassandraServerHelper.startEmbeddedCassandra(TimeUnit.SECONDS.toMillis(30L));
   }
 
-  private static void createKeyspaceSeshat() {
-    final Cluster.Builder clusterBuilder = new Cluster.Builder()
-        .withClusterName(System.getProperty(TestEnvironment.CASSANDRA_CLUSTER_NAME_PROPERTY));
-    ContactPointUtils.process(clusterBuilder, System.getProperty(TestEnvironment.CASSANDRA_CONTACT_POINTS_PROPERTY));
-    final Cluster cluster = clusterBuilder.build();
-    final Session session = cluster.connect();
-    // create meta keyspace seshat
-    session.execute("CREATE KEYSPACE " +
-        System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY) +
-        " WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}");
-    // create needed tenant management table
-    final String createTenantsTable = SchemaBuilder.createTable(
-        System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY), "tenants")
-        .addPartitionKey("identifier", DataType.text())
-        .addColumn("cluster_name", DataType.text())
-        .addColumn("contact_points", DataType.text())
-        .addColumn("keyspace_name", DataType.text())
-        .addColumn("replication_type", DataType.text())
-        .addColumn("replicas", DataType.text())
-        .addColumn("name", DataType.text())
-        .addColumn("description", DataType.text())
-        .buildInternal();
-    session.execute(createTenantsTable);
-
-    session.close();
-    cluster.close();
+  private void createKeyspaceSeshat() {
+    try (final Session session = cluster.connect()) {
+      // create meta keyspace seshat
+      session.execute("CREATE KEYSPACE " +
+          System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY) +
+          " WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}");
+      // create needed tenant management table
+      final String createTenantsTable = SchemaBuilder.createTable(
+          System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY), "tenants")
+          .addPartitionKey("identifier", DataType.text())
+          .addColumn("cluster_name", DataType.text())
+          .addColumn("contact_points", DataType.text())
+          .addColumn("keyspace_name", DataType.text())
+          .addColumn("replication_type", DataType.text())
+          .addColumn("replicas", DataType.text())
+          .addColumn("name", DataType.text())
+          .addColumn("description", DataType.text())
+          .buildInternal();
+      session.execute(createTenantsTable);
+    }
   }
 
-  public static void createKeyspaceTenant(final String identifier) {
-    final Cluster.Builder clusterBuilder = new Cluster.Builder()
-        .withClusterName(System.getProperty(TestEnvironment.CASSANDRA_CLUSTER_NAME_PROPERTY));
-    ContactPointUtils.process(clusterBuilder, System.getProperty(TestEnvironment.CASSANDRA_CONTACT_POINTS_PROPERTY));
-    final Cluster cluster = clusterBuilder.build();
-    final Session session = cluster.connect();
-    // create tenant keyspace
-    session.execute("CREATE KEYSPACE " + identifier
-        + " WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}");
-    // create needed command source table for the new tenant
-    final String createCommandSourceTable = SchemaBuilder.createTable(identifier, "command_source")
-        .addPartitionKey("source", DataType.text())
-        .addPartitionKey("bucket", DataType.text())
-        .addClusteringColumn("created_on", DataType.timestamp())
-        .addColumn("command", DataType.text())
-        .addColumn("processed", DataType.cboolean())
-        .addColumn("failed", DataType.cboolean())
-        .addColumn("failure_message", DataType.text())
-        .buildInternal();
-    session.execute(createCommandSourceTable);
-    // insert tenant connection info in management table
-    session.execute("USE " + System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY));
-    final MappingManager mappingManager = new MappingManager(session);
-    final CassandraTenant cassandraTenant = new CassandraTenant();
-    cassandraTenant.setIdentifier(identifier);
-    cassandraTenant.setClusterName(System.getProperty(TestEnvironment.CASSANDRA_CLUSTER_NAME_PROPERTY));
-    cassandraTenant.setContactPoints(System.getProperty(TestEnvironment.CASSANDRA_CONTACT_POINTS_PROPERTY));
-    cassandraTenant.setKeyspaceName(identifier);
-    cassandraTenant.setReplicationType("Simple");
-    cassandraTenant.setReplicas("1");
-    cassandraTenant.setName(identifier);
-    final Mapper<CassandraTenant> cassandraTenantMapper = mappingManager.mapper(CassandraTenant.class);
-    cassandraTenantMapper.save(cassandraTenant);
-
-    session.close();
-    cluster.close();
+  private void createKeyspaceTenant(final String identifier) {
+    try (final Session session = cluster.connect()) {
+      // create tenant keyspace
+      session.execute("CREATE KEYSPACE " + identifier
+          + " WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}");
+      // create needed command source table for the new tenant
+      final String createCommandSourceTable = SchemaBuilder.createTable(identifier, "command_source")
+          .addPartitionKey("source", DataType.text())
+          .addPartitionKey("bucket", DataType.text())
+          .addClusteringColumn("created_on", DataType.timestamp())
+          .addColumn("command", DataType.text())
+          .addColumn("processed", DataType.cboolean())
+          .addColumn("failed", DataType.cboolean())
+          .addColumn("failure_message", DataType.text())
+          .buildInternal();
+      session.execute(createCommandSourceTable);
+      // insert tenant connection info in management table
+      session.execute("USE " + System.getProperty(TestEnvironment.CASSANDRA_META_KEYSPACE_PROPERTY));
+      final MappingManager mappingManager = new MappingManager(session);
+      final CassandraTenant cassandraTenant = new CassandraTenant();
+      cassandraTenant.setIdentifier(identifier);
+      cassandraTenant.setClusterName(System.getProperty(TestEnvironment.CASSANDRA_CLUSTER_NAME_PROPERTY));
+      cassandraTenant.setContactPoints(System.getProperty(TestEnvironment.CASSANDRA_CONTACT_POINTS_PROPERTY));
+      cassandraTenant.setKeyspaceName(identifier);
+      cassandraTenant.setReplicationType("Simple");
+      cassandraTenant.setReplicas("1");
+      cassandraTenant.setName(identifier);
+      final Mapper<CassandraTenant> cassandraTenantMapper = mappingManager.mapper(CassandraTenant.class);
+      cassandraTenantMapper.save(cassandraTenant);
+    }
   }
 }
