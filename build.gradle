@@ -8,7 +8,7 @@ plugins {
     id 'com.github.hierynomus.license' version '0.13.1'
 }
 
-group 'io.mifos.core'
+group 'org.apache.fineract.cn'
 version '0.1.0-BUILD-SNAPSHOT'
 
 ext.versions = [
@@ -44,9 +44,9 @@ dependencies {
             [group: 'org.springframework.boot', name: 'spring-boot-starter', version: versions.springboot],
             [group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springboot],
             [group: 'com.google.code.gson', name: 'gson', version: versions.gson],
-            [group: 'io.mifos.core', name: 'cassandra', version: versions.frameworkcassandra],
-            [group: 'io.mifos.core', name: 'mariadb', version: versions.frameworkmariadb],
-            [group: 'io.mifos.core', name: 'lang', version: versions.frameworklang],
+            [group: 'org.apache.fineract.cn', name: 'cassandra', version: versions.frameworkcassandra],
+            [group: 'org.apache.fineract.cn', name: 'mariadb', version: versions.frameworkmariadb],
+            [group: 'org.apache.fineract.cn', name: 'lang', version: versions.frameworklang],
             [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'],
             [group: 'org.cassandraunit', name: 'cassandra-unit', version: '3.0.0.1'],
             [group: 'ch.vorburger.mariaDB4j', name: 'mariaDB4j', version: '2.1.3'],
