@@ -19,11 +19,11 @@
 package io.mifos.core.test.fixture.mariadb;
 
 import ch.vorburger.mariadb4j.DB;
-import io.mifos.core.mariadb.util.JdbcUrlBuilder;
 import io.mifos.core.test.env.TestEnvironment;
 import io.mifos.core.test.fixture.DataStoreTenantInitializer;
 
 import java.sql.*;
+import org.apache.fineract.cn.mariadb.util.JdbcUrlBuilder;
 
 @SuppressWarnings({"WeakerAccess", "unused", "SqlNoDataSourceInspection", "SqlDialectInspection"})
 public final class MariaDBInitializer extends DataStoreTenantInitializer {

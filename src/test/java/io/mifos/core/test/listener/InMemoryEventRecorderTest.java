@@ -20,7 +20,7 @@ package io.mifos.core.test.listener;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.mifos.core.lang.TenantContextHolder;
+import org.apache.fineract.cn.lang.TenantContextHolder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

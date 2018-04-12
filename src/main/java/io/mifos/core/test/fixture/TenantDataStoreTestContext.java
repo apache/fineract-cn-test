@@ -18,8 +18,8 @@
  */
 package io.mifos.core.test.fixture;
 
-import io.mifos.core.lang.AutoTenantContext;
 import io.mifos.core.test.env.TestEnvironment;
+import org.apache.fineract.cn.lang.AutoTenantContext;
 
 /**
  * @author Myrle Krantz

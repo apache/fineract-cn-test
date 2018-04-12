@@ -19,7 +19,7 @@
 package io.mifos.core.test.listener;
 
 import com.google.gson.Gson;
-import io.mifos.core.lang.TenantContextHolder;
+import org.apache.fineract.cn.lang.TenantContextHolder;
 import org.slf4j.Logger;
 
 import java.util.Date;

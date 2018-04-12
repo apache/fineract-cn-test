@@ -18,7 +18,7 @@
  */
 package io.mifos.core.test.domain;
 
-import io.mifos.core.lang.DateConverter;
+import org.apache.fineract.cn.lang.DateConverter;
 import org.junit.Assert;
 import org.junit.Test;
 

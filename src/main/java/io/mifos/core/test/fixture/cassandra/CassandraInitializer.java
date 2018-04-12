@@ -24,9 +24,9 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.schemabuilder.SchemaBuilder;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
-import io.mifos.core.cassandra.util.ContactPointUtils;
 import io.mifos.core.test.env.TestEnvironment;
 import io.mifos.core.test.fixture.DataStoreTenantInitializer;
+import org.apache.fineract.cn.cassandra.util.ContactPointUtils;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
 import java.util.concurrent.TimeUnit;

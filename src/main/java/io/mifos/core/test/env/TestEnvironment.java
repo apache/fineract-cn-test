@@ -18,8 +18,8 @@
  */
 package io.mifos.core.test.env;
 
-import io.mifos.core.lang.AutoTenantContext;
-import io.mifos.core.lang.security.RsaKeyPairFactory;
+import org.apache.fineract.cn.lang.AutoTenantContext;
+import org.apache.fineract.cn.lang.security.RsaKeyPairFactory;
 import org.junit.rules.ExternalResource;
 import org.springframework.util.Base64Utils;
 
