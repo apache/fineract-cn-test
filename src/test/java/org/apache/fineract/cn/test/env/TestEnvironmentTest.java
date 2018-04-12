@@ -31,7 +31,7 @@ public class TestEnvironmentTest {
 
   @Test
   public void shouldPopulateAllProperties() throws Exception {
-    final TestEnvironment testEnvironment = new TestEnvironment("mifosio-core");
+    final TestEnvironment testEnvironment = new TestEnvironment("fineract-cn-core");
     testEnvironment.populate();
 
     for (final Object key : testEnvironment.properties.keySet()) {
@@ -41,7 +41,7 @@ public class TestEnvironmentTest {
 
   @Test
   public void shouldGenerateUniqueId() {
-    final TestEnvironment testEnvironment = new TestEnvironment("mifosio-core");
+    final TestEnvironment testEnvironment = new TestEnvironment("fineract-cn-core");
     final String uniqueId = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX);
     final String uniqueId2 = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX);
     Assert.assertNotEquals(uniqueId, uniqueId2);
@@ -51,7 +51,7 @@ public class TestEnvironmentTest {
 
   @Test
   public void shouldGenerateZeroBufferedUniqueId() {
-    final TestEnvironment testEnvironment = new TestEnvironment("mifosio-core");
+    final TestEnvironment testEnvironment = new TestEnvironment("fineract-cn-core");
     final String uniqueId = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX, 5);
     Assert.assertTrue(uniqueId.startsWith(UNIQUE_ID_PREFIX));
     Assert.assertEquals(uniqueId.length() - UNIQUE_ID_PREFIX.length(), 5);
