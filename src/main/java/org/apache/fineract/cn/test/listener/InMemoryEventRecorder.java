@@ -19,6 +19,7 @@
 package org.apache.fineract.cn.test.listener;
 
 import com.google.gson.Gson;
+import java.util.Objects;
 import org.apache.fineract.cn.lang.TenantContextHolder;
 import org.slf4j.Logger;
 
@@ -49,10 +50,10 @@ class InMemoryEventRecorder implements EventRecorder {
 
   @Override
   public <T> boolean wait(final String operation, final T payloadMatcher) throws InterruptedException {
-    return waitForMatch(operation, new Function() {
+    return waitForMatch(operation, new Function<T, Boolean>() {
       @Override
-      public Object apply(Object x) {
-        return x.equals(payloadMatcher);
+      public Boolean apply(Object x) {
+        return Objects.equals(x,payloadMatcher);
       }
 
       @Override
