@@ -16,38 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.fineract.cn.test.fixture.mariadb;
+package org.apache.fineract.cn.test.fixture.postgresql;
 
-import ch.vorburger.mariadb4j.DB;
+import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import org.apache.fineract.cn.test.env.TestEnvironment;
 import org.apache.fineract.cn.test.fixture.DataStoreTenantInitializer;
 
 import java.sql.*;
-import org.apache.fineract.cn.mariadb.util.JdbcUrlBuilder;
+import org.apache.fineract.cn.postgresql.util.JdbcUrlBuilder;
 
 @SuppressWarnings({"WeakerAccess", "unused", "SqlNoDataSourceInspection", "SqlDialectInspection"})
-public final class MariaDBInitializer extends DataStoreTenantInitializer {
+public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
 
   private final boolean useExistingDB;
-  private static DB db;
+  private static EmbeddedPostgres pg;
 
-  public MariaDBInitializer() {
+  public PostgreSQLInitializer() {
     this(false);
   }
 
-  public MariaDBInitializer(final boolean useExistingDB) {
+  public PostgreSQLInitializer(final boolean useExistingDB) {
     super();
     this.useExistingDB = useExistingDB;
   }
 
   @Override
   public void initialize() throws Exception  {
-    MariaDBInitializer.setup(useExistingDB);
+    PostgreSQLInitializer.setup(useExistingDB);
   }
 
   @Override
   public void initializeTenant(final String tenantName) {
-    MariaDBInitializer.createDatabaseTenant(tenantName);
+    PostgreSQLInitializer.createDatabaseTenant(tenantName);
 
   }
 
@@ -55,7 +55,7 @@ public final class MariaDBInitializer extends DataStoreTenantInitializer {
   public void finish() {
     if (!useExistingDB) {
       try {
-        MariaDBInitializer.tearDown();
+        PostgreSQLInitializer.tearDown();
       } catch (final Exception e) {
         throw new RuntimeException(e);
       }
@@ -67,43 +67,38 @@ public final class MariaDBInitializer extends DataStoreTenantInitializer {
   }
   public static void setup(final boolean useExistingDB) throws Exception {
     if (!useExistingDB) {
-      MariaDBInitializer.startEmbeddedMariaDB();
-      MariaDBInitializer.createDatabaseSeshat();
+      PostgreSQLInitializer.startEmbeddedPostgreSQL();
+      PostgreSQLInitializer.createDatabaseSeshat();
     }
   }
 
   public static void tearDown() throws Exception {
-    if (MariaDBInitializer.db != null) {
-      MariaDBInitializer.db.stop();
-      MariaDBInitializer.db = null;
+    if (PostgreSQLInitializer.pg != null) {
+      PostgreSQLInitializer.pg.close();
+      PostgreSQLInitializer.pg = null;
     }
   }
 
-  private static void startEmbeddedMariaDB() throws Exception {
-    if (MariaDBInitializer.db == null) {
-      MariaDBInitializer.db = DB.newEmbeddedDB(3306);
-      MariaDBInitializer.db.start();
-    }
+  private static void startEmbeddedPostgreSQL() throws Exception {
+      PostgreSQLInitializer.pg = EmbeddedPostgres.start();
   }
 
   private static void createDatabaseSeshat() {
     try {
-      Class.forName(System.getProperty(TestEnvironment.MARIADB_DRIVER_CLASS_PROPERTY));
+      Class.forName(System.getProperty(TestEnvironment.POSTGRESQL_DRIVER_CLASS_PROPERTY));
     } catch (ClassNotFoundException ex) {
       throw new IllegalArgumentException(ex.getMessage(), ex);
     }
     final String jdbcUrl = JdbcUrlBuilder
-        .create(JdbcUrlBuilder.DatabaseType.MARIADB)
-        .host(System.getProperty(TestEnvironment.MARIADB_HOST_PROPERTY))
-        .port(System.getProperty(TestEnvironment.MARIADB_PORT_PROPERTY))
+        .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
+        .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
+        .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
         .build();
-    try (final Connection connection = DriverManager.getConnection(jdbcUrl,
-        System.getProperty(TestEnvironment.MARIADB_USER_PROPERTY),
-        System.getProperty(TestEnvironment.MARIADB_PASSWORD_PROPERTY))) {
+    try (final Connection connection = PostgreSQLInitializer.pg.getPostgresDatabase().getConnection()) {
       try (final Statement statement = connection.createStatement()) {
         // create meta database seshat
-        statement.execute("CREATE DATABASE IF NOT EXISTS " + System.getProperty(TestEnvironment.MARIADB_DATABASE_NAME_PROPERTY));
-        statement.execute("USE " + System.getProperty(TestEnvironment.MARIADB_DATABASE_NAME_PROPERTY));
+        statement.execute("CREATE DATABASE IF NOT EXISTS " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
+        statement.execute("USE " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
         // create needed tenant management table
         statement.execute("CREATE TABLE IF NOT EXISTS tenants (" +
             "  identifier    VARCHAR(32) NOT NULL," +
@@ -124,37 +119,37 @@ public final class MariaDBInitializer extends DataStoreTenantInitializer {
 
   public static void createDatabaseTenant(final String identifier) {
     try {
-      Class.forName(System.getProperty(TestEnvironment.MARIADB_DRIVER_CLASS_PROPERTY));
+      Class.forName(System.getProperty(TestEnvironment.POSTGRESQL_DRIVER_CLASS_PROPERTY));
     } catch (ClassNotFoundException ex) {
       throw new IllegalArgumentException(ex.getMessage(), ex);
     }
     final String jdbcUrl = JdbcUrlBuilder
-        .create(JdbcUrlBuilder.DatabaseType.MARIADB)
-        .host(System.getProperty(TestEnvironment.MARIADB_HOST_PROPERTY))
-        .port(System.getProperty(TestEnvironment.MARIADB_PORT_PROPERTY))
+        .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
+        .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
+        .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
         .build();
     try (final Connection connection = DriverManager.getConnection(jdbcUrl,
-        System.getProperty(TestEnvironment.MARIADB_USER_PROPERTY),
-        System.getProperty(TestEnvironment.MARIADB_PASSWORD_PROPERTY))) {
+        System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
+        System.getProperty(TestEnvironment.POSTGRESQL_PASSWORD_PROPERTY))) {
       try (final Statement statement = connection.createStatement()) {
         // create tenant database
         statement.execute("CREATE DATABASE IF NOT EXISTS " + identifier);
         // insert tenant connection info in management table
         try (final ResultSet resultSet = statement.executeQuery(
             "SELECT EXISTS (SELECT * FROM " +
-                System.getProperty(TestEnvironment.MARIADB_DATABASE_NAME_PROPERTY) +
+                System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY) +
                 ".tenants WHERE identifier = '" + identifier + "')")) {
           if (resultSet.next()
               && resultSet.getInt(1) == 0) {
-            final MariaDBTenant mariaDBTenant = new MariaDBTenant();
-            mariaDBTenant.setIdentifier(identifier);
-            mariaDBTenant.setDriverClass(System.getProperty(TestEnvironment.MARIADB_DRIVER_CLASS_PROPERTY));
-            mariaDBTenant.setDatabaseName(identifier);
-            mariaDBTenant.setHost(System.getProperty(TestEnvironment.MARIADB_HOST_PROPERTY));
-            mariaDBTenant.setPort(System.getProperty(TestEnvironment.MARIADB_PORT_PROPERTY));
-            mariaDBTenant.setUser(System.getProperty(TestEnvironment.MARIADB_USER_PROPERTY));
-            mariaDBTenant.setPassword(System.getProperty(TestEnvironment.MARIADB_PASSWORD_PROPERTY));
-            mariaDBTenant.insert(connection);
+            final PostgreSQLTenant postgreSQLTenant = new PostgreSQLTenant();
+            postgreSQLTenant.setIdentifier(identifier);
+            postgreSQLTenant.setDriverClass(System.getProperty(TestEnvironment.POSTGRESQL_DRIVER_CLASS_PROPERTY));
+            postgreSQLTenant.setDatabaseName(identifier);
+            postgreSQLTenant.setHost(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY));
+            postgreSQLTenant.setPort(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY));
+            postgreSQLTenant.setUser(System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY));
+            postgreSQLTenant.setPassword(System.getProperty(TestEnvironment.POSTGRESQL_PASSWORD_PROPERTY));
+            postgreSQLTenant.insert(connection);
           }
         }
       }

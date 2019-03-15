@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.fineract.cn.test.fixture.mariadb;
+package org.apache.fineract.cn.test.fixture.postgresql;
 
 import org.apache.fineract.cn.test.env.TestEnvironment;
 
@@ -25,7 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection", "WeakerAccess"})
-class MariaDBTenant {
+class PostgreSQLTenant {
 
   private static final int INDEX_IDENTIFIER = 1;
   private static final int INDEX_DRIVER_CLASS = 2;
@@ -35,12 +35,12 @@ class MariaDBTenant {
   private static final int INDEX_USER = 6;
   private static final int INDEX_PASSWORD = 7;
 
-  private static final String TABLE_NAME = System.getProperty(TestEnvironment.MARIADB_DATABASE_NAME_PROPERTY) + ".tenants";
+  private static final String TABLE_NAME = System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY) + ".tenants";
   private static final String INSERT_STMT = " INSERT INTO " +
-      MariaDBTenant.TABLE_NAME +
-      " (identifier, driver_class, database_name, host, port, a_user, pwd) " +
+      PostgreSQLTenant.TABLE_NAME +
+      " (identifier, driver_class, database_name, host, port, a_user) " +
       " values " +
-      " (?, ?, ?, ?, ?, ?, ?) ";
+      " (?, ?, ?, ?, ?, ?) ";
 
   private String identifier;
   private String driverClass;
@@ -50,12 +50,12 @@ class MariaDBTenant {
   private String user;
   private String password;
 
-  MariaDBTenant() {
+  PostgreSQLTenant() {
     super();
   }
 
   void insert(final Connection connection) throws SQLException {
-    try (final PreparedStatement insertTenantStatement = connection.prepareStatement(MariaDBTenant.INSERT_STMT)) {
+    try (final PreparedStatement insertTenantStatement = connection.prepareStatement(PostgreSQLTenant.INSERT_STMT)) {
       insertTenantStatement.setString(INDEX_IDENTIFIER, this.getIdentifier());
       insertTenantStatement.setString(INDEX_DRIVER_CLASS, this.getDriverClass());
       insertTenantStatement.setString(INDEX_DATABASE_NAME, this.getDatabaseName());
