@@ -42,8 +42,8 @@ public class TestEnvironmentTest {
   @Test
   public void shouldGenerateUniqueId() {
     final TestEnvironment testEnvironment = new TestEnvironment("fineract-cn-core");
-    final String uniqueId = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX);
-    final String uniqueId2 = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX);
+    final String uniqueId = testEnvironment.generateUniqueIdentifier(UNIQUE_ID_PREFIX);
+    final String uniqueId2 = testEnvironment.generateUniqueIdentifier(UNIQUE_ID_PREFIX);
     Assert.assertNotEquals(uniqueId, uniqueId2);
     Assert.assertTrue(uniqueId.startsWith(UNIQUE_ID_PREFIX));
     Assert.assertTrue(uniqueId2.startsWith(UNIQUE_ID_PREFIX));
@@ -52,7 +52,7 @@ public class TestEnvironmentTest {
   @Test
   public void shouldGenerateZeroBufferedUniqueId() {
     final TestEnvironment testEnvironment = new TestEnvironment("fineract-cn-core");
-    final String uniqueId = testEnvironment.generateUniqueIdentifer(UNIQUE_ID_PREFIX, 5);
+    final String uniqueId = testEnvironment.generateUniqueIdentifier(UNIQUE_ID_PREFIX, 5);
     Assert.assertTrue(uniqueId.startsWith(UNIQUE_ID_PREFIX));
     Assert.assertEquals(uniqueId.length() - UNIQUE_ID_PREFIX.length(), 5);
   }

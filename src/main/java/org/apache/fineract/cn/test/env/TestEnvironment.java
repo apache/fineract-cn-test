@@ -131,12 +131,12 @@ public final class TestEnvironment extends ExternalResource {
     return this;
   }
 
-  public String generateUniqueIdentifer(final String prefix) {
-    return generateUniqueIdentifer(prefix, 1);
+  public String generateUniqueIdentifier(final String prefix) {
+    return generateUniqueIdentifier(prefix, 1);
   }
 
   //prefix followed by a positive number.
-  public String generateUniqueIdentifer(final String prefix, final int minimumDigitCount) {
+  public String generateUniqueIdentifier(final String prefix, final int minimumDigitCount) {
     uniquenessSuffix++;
     final String format = String.format("%%0%dd", minimumDigitCount);
     return prefix + String.format(format, uniquenessSuffix);
