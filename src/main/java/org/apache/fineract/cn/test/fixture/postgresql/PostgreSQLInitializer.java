@@ -80,7 +80,9 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
   }
 
   private static void startEmbeddedPostgreSQL() throws Exception {
-      PostgreSQLInitializer.pg = EmbeddedPostgres.start();
+    PostgreSQLInitializer.pg = EmbeddedPostgres.start();
+    System.setProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY, TestEnvironment.POSTGRESQL_HOST_DEFAULT);
+    System.setProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY, TestEnvironment.POSTGRESQL_PORT_DEFAULT);
   }
 
   private static void createDatabaseSeshat() {
@@ -89,31 +91,51 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
     } catch (ClassNotFoundException ex) {
       throw new IllegalArgumentException(ex.getMessage(), ex);
     }
+
     final String jdbcUrl = JdbcUrlBuilder
-        .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
-        .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
-        .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
-        .build();
-    try (final Connection connection = PostgreSQLInitializer.pg.getPostgresDatabase().getConnection()) {
-      try (final Statement statement = connection.createStatement()) {
-        // create meta database seshat
-        statement.execute("CREATE DATABASE IF NOT EXISTS " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
-        statement.execute("USE " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
-        // create needed tenant management table
-        statement.execute("CREATE TABLE IF NOT EXISTS tenants (" +
-            "  identifier    VARCHAR(32) NOT NULL," +
-            "  driver_class  VARCHAR(255) NOT NULL," +
-            "  database_name VARCHAR(32) NOT NULL," +
-            "  host          VARCHAR(32) NOT NULL," +
-            "  port          VARCHAR(5)  NOT NULL," +
-            "  a_user        VARCHAR(32) NOT NULL," +
-            "  pwd           VARCHAR(32) NOT NULL," +
-            "  PRIMARY KEY (identifier)" +
-            ")");
-      }
-      connection.commit();
+            .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
+            .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
+            .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
+            .instanceName(System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_DEFAULT))
+            .build();
+    try (final Connection pgConnection = DriverManager.getConnection(jdbcUrl,
+            System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
+            System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY));
+         final Statement createDbStatement = pgConnection.createStatement()) {
+      pgConnection.setAutoCommit(true);
+      // create meta database seshat
+      createDbStatement.execute("CREATE DATABASE " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
     } catch (final SQLException ex) {
       ex.printStackTrace();
+    }
+
+    final String tenantJdbcUrl = JdbcUrlBuilder
+            .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
+            .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
+            .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
+            .instanceName(System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_DEFAULT))
+            .build();
+
+    try (
+            final Connection metaDbConnection = DriverManager.getConnection(tenantJdbcUrl,
+                    System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
+                    System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY));
+            final Statement metaStatement = metaDbConnection.createStatement()
+    ) {
+      metaDbConnection.setAutoCommit(true);
+      // create needed tenant management table
+      metaStatement.execute("CREATE TABLE IF NOT EXISTS tenants (" +
+              "  identifier    VARCHAR(32) NOT NULL," +
+              "  driver_class  VARCHAR(255) NOT NULL," +
+              "  database_name VARCHAR(32) NOT NULL," +
+              "  host          VARCHAR(32) NOT NULL," +
+              "  port          VARCHAR(5)  NOT NULL," +
+              "  a_user        VARCHAR(32) NOT NULL," +
+              "  pwd           VARCHAR(32) NOT NULL," +
+              "  PRIMARY KEY (identifier)" +
+              ")");
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
@@ -127,18 +149,17 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
         .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
         .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
         .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
+        .instanceName(TestEnvironment.POSTGRESQL_DATABASE_NAME_DEFAULT)
         .build();
     try (final Connection connection = DriverManager.getConnection(jdbcUrl,
         System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
         System.getProperty(TestEnvironment.POSTGRESQL_PASSWORD_PROPERTY))) {
       try (final Statement statement = connection.createStatement()) {
+        connection.setAutoCommit(true);
         // create tenant database
-        statement.execute("CREATE DATABASE IF NOT EXISTS " + identifier);
+        statement.execute("CREATE DATABASE " + identifier);
         // insert tenant connection info in management table
-        try (final ResultSet resultSet = statement.executeQuery(
-            "SELECT EXISTS (SELECT * FROM " +
-                System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY) +
-                ".tenants WHERE identifier = '" + identifier + "')")) {
+        try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM tenants WHERE identifier = '" + identifier + "'")) {
           if (resultSet.next()
               && resultSet.getInt(1) == 0) {
             final PostgreSQLTenant postgreSQLTenant = new PostgreSQLTenant();
@@ -153,7 +174,6 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
           }
         }
       }
-      connection.commit();
     } catch (final SQLException ex) {
       ex.printStackTrace();
     }

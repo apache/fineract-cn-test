@@ -35,9 +35,7 @@ class PostgreSQLTenant {
   private static final int INDEX_USER = 6;
   private static final int INDEX_PASSWORD = 7;
 
-  private static final String TABLE_NAME = System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY) + ".tenants";
-  private static final String INSERT_STMT = " INSERT INTO " +
-      PostgreSQLTenant.TABLE_NAME +
+  private static final String INSERT_STMT = " INSERT INTO " + "tenants" +
       " (identifier, driver_class, database_name, host, port, a_user) " +
       " values " +
       " (?, ?, ?, ?, ?, ?) ";
