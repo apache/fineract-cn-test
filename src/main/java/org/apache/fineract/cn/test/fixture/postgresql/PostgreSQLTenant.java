@@ -18,8 +18,6 @@
  */
 package org.apache.fineract.cn.test.fixture.postgresql;
 
-import org.apache.fineract.cn.test.env.TestEnvironment;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,9 +34,9 @@ class PostgreSQLTenant {
   private static final int INDEX_PASSWORD = 7;
 
   private static final String INSERT_STMT = " INSERT INTO " + "tenants" +
-      " (identifier, driver_class, database_name, host, port, a_user) " +
+      " (identifier, driver_class, database_name, host, port, a_user, pwd) " +
       " values " +
-      " (?, ?, ?, ?, ?, ?) ";
+      " (?, ?, ?, ?, ?, ?, ?) ";
 
   private String identifier;
   private String driverClass;

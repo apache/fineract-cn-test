@@ -100,7 +100,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
             .build();
     try (final Connection pgConnection = DriverManager.getConnection(jdbcUrl,
             System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
-            System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY));
+            System.getProperty(TestEnvironment.POSTGRESQL_PASSWORD_PROPERTY));
          final Statement createDbStatement = pgConnection.createStatement()) {
       pgConnection.setAutoCommit(true);
       // create meta database seshat
@@ -119,7 +119,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
     try (
             final Connection metaDbConnection = DriverManager.getConnection(tenantJdbcUrl,
                     System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
-                    System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY));
+                    System.getProperty(TestEnvironment.POSTGRESQL_PASSWORD_PROPERTY));
             final Statement metaStatement = metaDbConnection.createStatement()
     ) {
       metaDbConnection.setAutoCommit(true);

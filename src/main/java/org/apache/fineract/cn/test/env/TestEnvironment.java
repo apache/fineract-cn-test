@@ -74,7 +74,6 @@ public final class TestEnvironment extends ExternalResource {
   public static final String POSTGRESQL_USER_PROPERTY = "postgresql.user";
   public static final String POSTGRESQL_USER_DEFAULT = "postgres";
 
-  // PostgreSQL does not require a password for authentication
   public static final String POSTGRESQL_PASSWORD_PROPERTY = "postgresql.password";
   public static final String POSTGRESQL_PASSWORD_DEFAULT = "postgres";
 
