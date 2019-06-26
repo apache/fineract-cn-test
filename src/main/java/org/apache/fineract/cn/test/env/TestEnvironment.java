@@ -64,6 +64,7 @@ public final class TestEnvironment extends ExternalResource {
 
   public static final String POSTGRESQL_DATABASE_NAME_PROPERTY = "postgresql.database";
   public static final String POSTGRESQL_DATABASE_NAME_DEFAULT = "seshat";
+  public static final String POSTGRESQL_DATABASE_NAME = "postgres";
 
   public static final String POSTGRESQL_HOST_PROPERTY = "postgresql.host";
   public static final String POSTGRESQL_HOST_DEFAULT = "localhost";
