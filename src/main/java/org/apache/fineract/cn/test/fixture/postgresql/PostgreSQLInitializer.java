@@ -80,7 +80,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
   }
 
   private static void startEmbeddedPostgreSQL() throws Exception {
-    PostgreSQLInitializer.pg = EmbeddedPostgres.start();
+    PostgreSQLInitializer.pg = EmbeddedPostgres.builder().setPort(Integer.valueOf(TestEnvironment.POSTGRESQL_PORT_DEFAULT)).start();
     System.setProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY, TestEnvironment.POSTGRESQL_HOST_DEFAULT);
     System.setProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY, TestEnvironment.POSTGRESQL_PORT_DEFAULT);
   }
@@ -96,7 +96,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
             .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
             .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
             .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
-            .instanceName(System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_DEFAULT))
+            .instanceName(TestEnvironment.POSTGRESQL_DATABASE_NAME)
             .build();
     try (final Connection pgConnection = DriverManager.getConnection(jdbcUrl,
             System.getProperty(TestEnvironment.POSTGRESQL_USER_PROPERTY),
@@ -105,6 +105,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
       pgConnection.setAutoCommit(true);
       // create meta database seshat
       createDbStatement.execute("CREATE DATABASE " + System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY));
+      createDbStatement.execute("CREATE DATABASE playground");
     } catch (final SQLException ex) {
       ex.printStackTrace();
     }
@@ -113,7 +114,7 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
             .create(JdbcUrlBuilder.DatabaseType.POSTGRESQL)
             .host(System.getProperty(TestEnvironment.POSTGRESQL_HOST_PROPERTY))
             .port(System.getProperty(TestEnvironment.POSTGRESQL_PORT_PROPERTY))
-            .instanceName(System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_DEFAULT))
+            .instanceName(System.getProperty(TestEnvironment.POSTGRESQL_DATABASE_NAME_PROPERTY))
             .build();
 
     try (
