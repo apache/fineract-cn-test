@@ -59,23 +59,24 @@ public final class TestEnvironment extends ExternalResource {
   public static final String CASSANDRA_CONSISTENCY_LEVEL_DELETE_PROPERTY = "cassandra.cl.delete";
   public static final String CASSANDRA_CONSISTENCY_LEVEL_DEFAULT = "ONE";
 
-  public static final String MARIADB_DRIVER_CLASS_PROPERTY = "mariadb.driverClass";
-  public static final String MARIADB_DRIVER_CLASS_DEFAULT = "org.mariadb.jdbc.Driver";
+  public static final String POSTGRESQL_DRIVER_CLASS_PROPERTY = "postgresql.driverClass";
+  public static final String POSTGRESQL_DRIVER_CLASS_DEFAULT = "org.postgresql.Driver";
 
-  public static final String MARIADB_DATABASE_NAME_PROPERTY = "mariadb.database";
-  public static final String MARIADB_DATABASE_NAME_DEFAULT = "seshat";
+  public static final String POSTGRESQL_DATABASE_NAME_PROPERTY = "postgresql.database";
+  public static final String POSTGRESQL_DATABASE_NAME_DEFAULT = "seshat";
+  public static final String POSTGRESQL_DATABASE_NAME = "postgres";
 
-  public static final String MARIADB_HOST_PROPERTY = "mariadb.host";
-  public static final String MARIADB_HOST_DEFAULT = "localhost";
+  public static final String POSTGRESQL_HOST_PROPERTY = "postgresql.host";
+  public static final String POSTGRESQL_HOST_DEFAULT = "localhost";
 
-  public static final String MARIADB_PORT_PROPERTY = "mariadb.port";
-  public static final String MARIADB_PORT_DEFAULT = "3306";
+  public static final String POSTGRESQL_PORT_PROPERTY = "postgresql.port";
+  public static final String POSTGRESQL_PORT_DEFAULT = "5432";
 
-  public static final String MARIADB_USER_PROPERTY = "mariadb.user";
-  public static final String MARIADB_USER_DEFAULT = "root";
+  public static final String POSTGRESQL_USER_PROPERTY = "postgresql.user";
+  public static final String POSTGRESQL_USER_DEFAULT = "postgres";
 
-  public static final String MARIADB_PASSWORD_PROPERTY = "mariadb.password";
-  public static final String MARIADB_PASSWORD_DEFAULT = "mysql";
+  public static final String POSTGRESQL_PASSWORD_PROPERTY = "postgresql.password";
+  public static final String POSTGRESQL_PASSWORD_DEFAULT = "postgres";
 
   public static final String SPRING_CLOUD_DISCOVERY_ENABLED_PROPERTY = "spring.cloud.discovery.enabled";
   public static final String SPRING_CLOUD_DISCOVERY_ENABLED_DEFAULT = "false";
@@ -211,12 +212,12 @@ public final class TestEnvironment extends ExternalResource {
     this.properties.setProperty(CASSANDRA_CONSISTENCY_LEVEL_READ_PROPERTY, CASSANDRA_CONSISTENCY_LEVEL_DEFAULT);
     this.properties.setProperty(CASSANDRA_CONSISTENCY_LEVEL_WRITE_PROPERTY, CASSANDRA_CONSISTENCY_LEVEL_DEFAULT);
     this.properties.setProperty(CASSANDRA_CONSISTENCY_LEVEL_DELETE_PROPERTY, CASSANDRA_CONSISTENCY_LEVEL_DEFAULT);
-    this.properties.setProperty(MARIADB_DRIVER_CLASS_PROPERTY, MARIADB_DRIVER_CLASS_DEFAULT);
-    this.properties.setProperty(MARIADB_DATABASE_NAME_PROPERTY, MARIADB_DATABASE_NAME_DEFAULT);
-    this.properties.setProperty(MARIADB_HOST_PROPERTY, MARIADB_HOST_DEFAULT);
-    this.properties.setProperty(MARIADB_PORT_PROPERTY, MARIADB_PORT_DEFAULT);
-    this.properties.setProperty(MARIADB_USER_PROPERTY, MARIADB_USER_DEFAULT);
-    this.properties.setProperty(MARIADB_PASSWORD_PROPERTY, MARIADB_PASSWORD_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_DRIVER_CLASS_PROPERTY, POSTGRESQL_DRIVER_CLASS_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_DATABASE_NAME_PROPERTY, POSTGRESQL_DATABASE_NAME_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_HOST_PROPERTY, POSTGRESQL_HOST_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_PORT_PROPERTY, POSTGRESQL_PORT_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_USER_PROPERTY, POSTGRESQL_USER_DEFAULT);
+    this.properties.setProperty(POSTGRESQL_PASSWORD_PROPERTY, POSTGRESQL_PASSWORD_DEFAULT);
     this.properties.setProperty(SPRING_CLOUD_DISCOVERY_ENABLED_PROPERTY, SPRING_CLOUD_DISCOVERY_ENABLED_DEFAULT);
     this.properties.setProperty(SPRING_CLOUD_CONFIG_ENABLED_PROPERTY, SPRING_CLOUD_CONFIG_ENABLED_DEFAULT);
     this.properties.setProperty(FLYWAY_ENABLED_PROPERTY, FLYWAY_ENABLED_DEFAULT);

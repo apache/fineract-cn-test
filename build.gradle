@@ -36,7 +36,6 @@ ext.versions = [
         gson                      : '2.5',
         findbugs                  : '3.0.1',
         frameworklang             : '0.1.0-BUILD-SNAPSHOT',
-        frameworkmariadb          : '0.1.0-BUILD-SNAPSHOT',
         frameworkcassandra        : '0.1.0-BUILD-SNAPSHOT'
 ]
 
@@ -65,11 +64,11 @@ dependencies {
             [group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springboot],
             [group: 'com.google.code.gson', name: 'gson', version: versions.gson],
             [group: 'org.apache.fineract.cn', name: 'cassandra', version: versions.frameworkcassandra],
-            [group: 'org.apache.fineract.cn', name: 'mariadb', version: versions.frameworkmariadb],
+            [group: 'org.apache.fineract.cn', name: 'postgresql', version: '0.1.0-BUILD-SNAPSHOT'],
             [group: 'org.apache.fineract.cn', name: 'lang', version: versions.frameworklang],
             [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'],
             [group: 'org.cassandraunit', name: 'cassandra-unit', version: '3.0.0.1'],
-            [group: 'ch.vorburger.mariaDB4j', name: 'mariaDB4j', version: '2.1.3'],
+            [group: 'com.opentable.components', name: 'otj-pg-embedded', version: '0.7.1']
     )
 }
 
