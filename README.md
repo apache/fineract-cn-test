@@ -1,4 +1,4 @@
-# Apache Fineract CN Test
+# Apache Fineract CN Test [![Build Status](https://api.travis-ci.com/apache/fineract-cn-test.svg?branch=develop)](https://travis-ci.com/apache/fineract-cn-test)
 
 ## Abstract
 Apache Fineract CN is an application framework for digital financial services, a system to support nationwide and cross-national financial transactions and help to level and speed the creation of an inclusive, interconnected digital economy for every nation in the world.
@@ -7,13 +7,14 @@ Apache Fineract CN is an application framework for digital financial services, a
 ### Runtime
 Install Java 8 as described at https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html.
 
-### MariaDB
-Install MariaDB as described at https://mariadb.com/kb/en/mariadb/binary-packages/.
+### PostgreSQL
+Install PostgreSQL as described at
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04.
 
 After installation you need to create the meta database:
 
-    mysql -u root -pmysql
-    CREATE DATABASE IF NOT EXISTS system_console;
+    sudo -i -u postgres psql
+    CREATE DATABASE system_console;
     
 ### Cassandra
 Install Apache Cassandra as described at https://wiki.apache.org/cassandra/GettingStarted.

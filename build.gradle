@@ -24,6 +24,7 @@ buildscript {
 plugins {
     id 'com.github.hierynomus.license' version '0.13.1'
     id("org.nosphere.apache.rat") version "0.3.1"
+    id "com.jfrog.artifactory" version "4.9.5"
 }
 
 group 'org.apache.fineract.cn'
@@ -35,7 +36,6 @@ ext.versions = [
         gson                      : '2.5',
         findbugs                  : '3.0.1',
         frameworklang             : '0.1.0-BUILD-SNAPSHOT',
-        frameworkmariadb          : '0.1.0-BUILD-SNAPSHOT',
         frameworkcassandra        : '0.1.0-BUILD-SNAPSHOT'
 ]
 
@@ -53,6 +53,7 @@ tasks.withType(JavaCompile) {
 repositories {
     jcenter()
     mavenLocal()
+    maven { url 'https://mifos.jfrog.io/mifos/libs-snapshot/' }
 }
 
 dependencies {
@@ -63,11 +64,11 @@ dependencies {
             [group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springboot],
             [group: 'com.google.code.gson', name: 'gson', version: versions.gson],
             [group: 'org.apache.fineract.cn', name: 'cassandra', version: versions.frameworkcassandra],
-            [group: 'org.apache.fineract.cn', name: 'mariadb', version: versions.frameworkmariadb],
+            [group: 'org.apache.fineract.cn', name: 'postgresql', version: '0.1.0-BUILD-SNAPSHOT'],
             [group: 'org.apache.fineract.cn', name: 'lang', version: versions.frameworklang],
             [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'],
             [group: 'org.cassandraunit', name: 'cassandra-unit', version: '3.0.0.1'],
-            [group: 'ch.vorburger.mariaDB4j', name: 'mariaDB4j', version: '2.1.3'],
+            [group: 'com.opentable.components', name: 'otj-pg-embedded', version: '0.7.1']
     )
 }
 
@@ -77,10 +78,27 @@ publishing {
             from components.java
             groupId project.group
             artifactId project.name
-            version project.version
+            version project.findProperty('externalVersion') ?: project.version
         }
     }
 }
+
+artifactory {
+    contextUrl = System.getenv("ARTIFACTORY_URL")
+    publish {
+        repository {
+            repoKey = project.findProperty('artifactoryRepoKey')
+            username = System.getenv("ARTIFACTORY_USER")
+            password = System.getenv("ARTIFACTORY_PASSWORD")
+        }
+
+        defaults {
+            publications ('testPublication')
+        }
+    }
+}
+artifactoryPublish.dependsOn('clean','publishToMavenLocal')
+
 
 jar {
     from sourceSets.main.allSource
