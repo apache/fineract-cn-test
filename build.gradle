@@ -25,6 +25,9 @@ plugins {
     id 'com.github.hierynomus.license' version '0.13.1'
     id("org.nosphere.apache.rat") version "0.3.1"
     id "com.jfrog.artifactory" version "4.9.5"
+    id 'maven-publish'
+    id 'idea'
+    id 'java'
 }
 
 group 'org.apache.fineract.cn'
@@ -39,10 +42,6 @@ ext.versions = [
         frameworkcassandra        : '0.1.0-BUILD-SNAPSHOT'
 ]
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
 apply plugin: 'license'
 
 tasks.withType(JavaCompile) {
