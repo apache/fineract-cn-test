@@ -31,15 +31,15 @@ plugins {
 }
 
 group 'org.apache.fineract.cn'
-version '0.1.0-BUILD-SNAPSHOT'
+version '0.1.x-SNAPSHOT'
 
 ext.versions = [
         springcontext             : '4.3.3.RELEASE',
         springboot                : '1.4.1.RELEASE',
         gson                      : '2.5',
         findbugs                  : '3.0.1',
-        frameworklang             : '0.1.0-BUILD-SNAPSHOT',
-        frameworkcassandra        : '0.1.0-BUILD-SNAPSHOT'
+        frameworklang             : '0.1.x-SNAPSHOT',
+        frameworkcassandra        : '0.1.x-SNAPSHOT'
 ]
 
 apply plugin: 'license'
@@ -63,7 +63,7 @@ dependencies {
             [group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springboot],
             [group: 'com.google.code.gson', name: 'gson', version: versions.gson],
             [group: 'org.apache.fineract.cn', name: 'cassandra', version: versions.frameworkcassandra],
-            [group: 'org.apache.fineract.cn', name: 'postgresql', version: '0.1.0-BUILD-SNAPSHOT'],
+            [group: 'org.apache.fineract.cn', name: 'postgresql', version: '0.1.x-SNAPSHOT'],
             [group: 'org.apache.fineract.cn', name: 'lang', version: versions.frameworklang],
             [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'],
             [group: 'org.cassandraunit', name: 'cassandra-unit', version: '3.0.0.1'],
