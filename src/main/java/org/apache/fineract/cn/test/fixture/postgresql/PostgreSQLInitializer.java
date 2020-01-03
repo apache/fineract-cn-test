@@ -161,8 +161,8 @@ public final class PostgreSQLInitializer extends DataStoreTenantInitializer {
         statement.execute("CREATE DATABASE " + identifier);
         // insert tenant connection info in management table
         try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM tenants WHERE identifier = '" + identifier + "'")) {
-          if (resultSet.next()
-              && resultSet.getInt(1) == 0) {
+          if (!resultSet.next()
+              || (resultSet.next() && resultSet.getInt(1) == 0)) {
             final PostgreSQLTenant postgreSQLTenant = new PostgreSQLTenant();
             postgreSQLTenant.setIdentifier(identifier);
             postgreSQLTenant.setDriverClass(System.getProperty(TestEnvironment.POSTGRESQL_DRIVER_CLASS_PROPERTY));
