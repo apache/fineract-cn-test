@@ -31,15 +31,15 @@ plugins {
 }
 
 group 'org.apache.fineract.cn'
-version '0.1.0-BUILD-SNAPSHOT'
+version 'spring_boot_2-SNAPSHOT'
 
 ext.versions = [
         springcontext             : '4.3.3.RELEASE',
         springboot                : '1.4.1.RELEASE',
         gson                      : '2.5',
         findbugs                  : '3.0.1',
-        frameworklang             : '0.1.0-BUILD-SNAPSHOT',
-        frameworkcassandra        : '0.1.0-BUILD-SNAPSHOT'
+        frameworklang             : 'spring_boot_2-SNAPSHOT',
+        frameworkcassandra        : 'spring_boot_2-SNAPSHOT'
 ]
 
 apply plugin: 'license'
