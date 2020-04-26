@@ -22,9 +22,9 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.hierynomus.license' version '0.13.1'
-    id("org.nosphere.apache.rat") version "0.3.1"
-    id "com.jfrog.artifactory" version "4.9.5"
+    id 'com.github.hierynomus.license' version '0.15.0'
+    id("org.nosphere.apache.rat") version "0.6.0"
+    id "com.jfrog.artifactory" version "4.15.1"
     id 'maven-publish'
     id 'idea'
     id 'java'
@@ -34,13 +34,12 @@ group 'org.apache.fineract.cn'
 version 'spring_boot_2-SNAPSHOT'
 
 ext.versions = [
-        springcontext             : '4.3.3.RELEASE',
-        springboot                : '1.4.1.RELEASE',
-        gson                      : '2.5',
-        findbugs                  : '3.0.1',
+        springcontext             : '5.2.5.RELEASE',
+        springboot                : '2.2.6.RELEASE',
+        gson                      : '2.8.6',
+        findbugs                  : '3.0.2',
         frameworklang             : 'spring_boot_2-SNAPSHOT',
-        frameworkcassandra        : 'spring_boot_2-SNAPSHOT'
-]
+        frameworkcassandra        : 'spring_boot_2-SNAPSHOT']
 
 apply plugin: 'license'
 
@@ -121,6 +120,10 @@ rat {
             "build/**",
             "gradlew",
             "gradlew.bat",
-            "README.md"
+            "README.md",
+            ".project",
+            ".settings/**",
+            ".classpath",
+            "bin/**"
     ]
 }
